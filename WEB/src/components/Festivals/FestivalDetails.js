@@ -28,11 +28,17 @@ class FestivalDetails extends Component {
         this.getListGames();
     }
     
+    hideModal = () => {
+        this.setState({ showM: false });
+    };
+    
+
     //get a string, it's resume informations of games
     getListGames = () =>{
         var uri = this.props.location.pathname;
         var festivalId = uri.split("/").pop();
         console.log("objet : "+festivalId)
+        console.log(process.env.REACT_APP_DB)
         axios.get(process.env.REACT_APP_DB + 'reservations/listgames/'+festivalId)
         .then(res=>{
                 console.log(res.data.listgames)
