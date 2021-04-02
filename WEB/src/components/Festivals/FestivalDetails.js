@@ -27,11 +27,6 @@ class FestivalDetails extends Component {
         this.getFestival();
         this.getListGames();
     }
-    
-    hideModal = () => {
-        this.setState({ showM: false });
-    };
-    
 
     //get a string, it's resume informations of games
     getListGames = () =>{
