@@ -5,6 +5,7 @@ import {Link} from 'react-router-dom';
 import DataTable from 'react-data-table-component';
 import { Redirect } from 'react-router';
 
+//allow to handle details of the festival, all reservations, areas etc 
 class FestivalDetails extends Component {
     constructor(props){
         super(props);
@@ -20,29 +21,19 @@ class FestivalDetails extends Component {
         };
         this.handleAreaFormShow = this.handleAreaFormShow.bind(this);
         this.handleAreaSubmit = this.handleAreaSubmit.bind(this);
-        this.showModal = this.showModal.bind(this);
-        this.hideModal = this.hideModal.bind(this);
     }
     
     componentDidMount(){
         this.getFestival();
         this.getListGames();
     }
-
-
-    showModal = () => {
-        console.log("on ouvre la modal")
-        console.log(this.state.showM)
-        this.setState({ showM: true });
-    };
     
-    hideModal = () => {
-        this.setState({ showM: false });
-    };
-    
-
+    //get a string, it's resume informations of games
     getListGames = () =>{
-        axios.get(process.env.REACT_APP_DB + 'reservations/listgames')
+        var uri = this.props.location.pathname;
+        var festivalId = uri.split("/").pop();
+        console.log("objet : "+festivalId)
+        axios.get(process.env.REACT_APP_DB + 'reservations/listgames/'+festivalId)
         .then(res=>{
                 console.log(res.data.listgames)
                 this.setState({listgames: res.data.tabgames})
@@ -50,6 +41,7 @@ class FestivalDetails extends Component {
         )
     }
 
+    //get a festival and all informations necessary
     getFestival = () => {
         var uri = this.props.location.pathname;
         var festivalId = uri.split("/").pop();
@@ -57,7 +49,7 @@ class FestivalDetails extends Component {
         .then(res => {
             this.setState({festival: res.data.festival});
             var reservations = res.data.reservations;
-            for (var i = 0; i < reservations.length; i++) {
+            for (var i = 0; i < reservations.length; i++) { // loop to take all the reservations, and all places
                 var array = reservations[i].games.join(', ');
                 reservations[i].games = array;
                 var placeString = '';
@@ -69,12 +61,12 @@ class FestivalDetails extends Component {
                 }
                 reservations[i].placeString = placeString;
             }
-            this.setState({reservations: reservations});
+            this.setState({reservations: reservations}); //all reservations of the festival are set 
             this.setState({areas: res.data.areas});
         })
     }
 
-    handleAreaFormShow = () => {
+    handleAreaFormShow = () => { //open and close form
         var current = this.state.showAreaForm;
         this.setState({
             showAreaForm: !current
@@ -82,6 +74,7 @@ class FestivalDetails extends Component {
         console.log(this.state.areas)
     }
 
+    //handle the add of area
     handleAreaSubmit(event) {
         event.preventDefault();
         const data = new FormData(event.target);
@@ -98,6 +91,7 @@ class FestivalDetails extends Component {
         })
     }
 
+    //delete an Area
     deleteArea = (area) => {
         var answer = window.confirm("êtes-vous sûr de vouloir supprimer cet élément ?");
         if (answer) {
@@ -197,16 +191,19 @@ class FestivalDetails extends Component {
                         noDataComponent="Pas encore de reservations"
                     />
                     
-                    <br/>
-                    <h4><Badge color="info">Liste des Jeux :</Badge> </h4>
+                <br/>
+                
+                
+                <h4><Badge color="info">Liste des Jeux :</Badge> </h4>
+                    
                     <List type="inline">
                     {this.state.listgames.map((game, indexArea) => (
                         <li key={indexArea}>{game}</li>
                         ))}
                     </List>
+
                 </div>
                 <br/>          
-
                 <Link to={{
                     pathname: '/newReservation/' + this.state.festival._id,
                     state: {

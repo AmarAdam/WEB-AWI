@@ -3,6 +3,9 @@ import { Table, Button, Form, Row, Col, FormGroup, Label, Input, Badge } from 'r
 import axios from 'axios';
 import DataTable from 'react-data-table-component';
 
+
+// bill allow to handle payment and facturation
+
 class Bills extends Component {
     constructor(props){
         super(props);
@@ -16,7 +19,8 @@ class Bills extends Component {
         this.getBills();
     }
 
-    getBills = () => {
+    
+    getBills = () => { //get all bills
         axios.get(process.env.REACT_APP_DB + 'bills')
         .then(res => {
             this.setState({bills: res.data.bills});
@@ -25,7 +29,7 @@ class Bills extends Component {
     }
 
     render(){
-
+        //prepare datatable, to sort bill with fests 
         const data = this.state.bills;
         const columns = [
             {
