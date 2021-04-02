@@ -41,8 +41,13 @@ class FestivalDetails extends Component {
     };
     
 
+    //get a string, it's resume informations of games
     getListGames = () =>{
-        axios.get(process.env.REACT_APP_DB + 'reservations/listgames')
+        var uri = this.props.location.pathname;
+        var festivalId = uri.split("/").pop();
+        console.log("objet : "+festivalId)
+        console.log(process.env.REACT_APP_DB)
+        axios.get(process.env.REACT_APP_DB + 'reservations/listgames/'+festivalId)
         .then(res=>{
                 console.log(res.data.listgames)
                 this.setState({listgames: res.data.tabgames})
